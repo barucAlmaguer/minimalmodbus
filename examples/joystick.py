@@ -1,8 +1,19 @@
+
 import minimalmodbus
 import time
+import serial
+import serial.tools.list_ports as listPorts
 
-instr = minimalmodbus.Instrument('COM4',1)
-instr.serial.baudrate = 9600
+def portNames(i):
+	pnames = []
+	for port in listPorts.comports():
+		pnames.append(port[0])
+	return pnames[i]
+
+def initArduino(name, id, baud):
+    instr = minimalmodbus.Instrument(name,id)
+    instr.serial.baudrate = baud
+    return instr
 
 def print():
     instr
@@ -14,5 +25,5 @@ def blink(pin, count, s):
         instr.write_bit(pin,0)
         time.sleep(s)
 
-def readJoystick():
-    return instr.read_registers(0,2,4)
+def readJoystick(ins):
+    return ins.read_registers(0,3,4)
