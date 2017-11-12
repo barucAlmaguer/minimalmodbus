@@ -1,7 +1,5 @@
-
-import minimalmodbus
 import time
-import serial
+import minimalmodbus
 import serial.tools.list_ports as listPorts
 
 def portNames(i):
@@ -13,16 +11,39 @@ def portNames(i):
 def initArduino(name, id, baud):
     instr = minimalmodbus.Instrument(name,id)
     instr.serial.baudrate = baud
+    instr.serial.timeout = 0.5
     return instr
 
-def print():
-    instr
+def infiniteTest(id, baud, delay):
+    ins = initArduino(portNames(0), id, baud)
+    i = 0
+    while True:
+        print("{}: {}".format(i, readJoystick(ins)))
+        i += 1
+        time.sleep(delay)
 
-def blink(pin, count, s):
+def doubleTest(baud, delay):
+    ins = initArduino(portNames(0), 1, baud)
+    ins2 = initArduino(portNames(0), 2, baud)
+    i = 0
+    errors = 0
+    while True:
+        try:
+            print("{}: i1={}, i2={}".format(i, readJoystick(ins), readJoystick(ins2)))
+            i+=1
+            time.sleep(delay)
+        except IOError:
+            errors += 1
+            print("ERROR".format())
+        except KeyboardInterrupt:
+            print("{} errors found".format(errors))
+            raise KeyboardInterrupt
+
+def blink(ins, pin, count, s):
     for i in range(0,count):
-        instr.write_bit(pin,1)
+        ins.write_bit(pin,1)
         time.sleep(s)
-        instr.write_bit(pin,0)
+        ins.write_bit(pin,0)
         time.sleep(s)
 
 def readJoystick(ins):

@@ -1,11 +1,11 @@
 import minimalmodbus
 import time
 
-instr = minimalmodbus.Instrument('COM4',1)
+instr = minimalmodbus.Instrument('COM19',2)
 instr.serial.baudrate = 9600
 
-def print():
-    instr
+#def print():
+#    instr
 
 def blink(pin, count, s):
     for i in range(0,count):
